@@ -88,31 +88,50 @@ export class ZohoService {
     }
   }
 
-  async postLog(body: TrackModuleBodyDto, portalId: string, projectId: string) {
-    const result = await this.requestZohoProject({
-      url: `portal/${portalId}/projects/${projectId}/log`,
-      method: "POST",
-      data: {
-        ...body,
-        frompage: "taskdetails",
-        notes: "<div>Worked on API integration</div>",
-        bill_status: "Billable",
-        for_timer: false,
-      },
-    });
+  async postLog(
+    body: TrackModuleBodyDto[],
+    portalId: string,
+    projectId: string,
+  ) {
+    const result = [];
+    for (const element of body) {
+      result.push(
+        await this.requestZohoProject({
+          url: `portal/${portalId}/projects/${projectId}/log`,
+          method: "POST",
+          data: {
+            ...element,
+            frompage: "taskdetails",
+            notes: "<div>Worked on API integration</div>",
+            bill_status: "Billable",
+            for_timer: false,
+          },
+        }),
+      );
+    }
+
     this.logger.log(`Log added ${JSON.stringify(result)}`);
     return result;
   }
 
-  async postTask(body: TrackCreateDTO, portalId: string, projectId: string) {
-    const result = await this.requestZohoProject({
-      url: `portal/${portalId}/projects/${projectId}/tasks`,
-      method: "POST",
-      data: body,
-    });
-    const { id, name } = result;
-    this.logger.log(`Task created ${JSON.stringify({ id, name })}`);
-    return { id, name };
+  async postTask(body: TrackCreateDTO[], portalId: string, projectId: string) {
+    const result = [];
+    for (const element of body) {
+      result.push(
+        await this.requestZohoProject({
+          url: `portal/${portalId}/projects/${projectId}/tasks`,
+          method: "POST",
+          data: element,
+        }),
+      );
+    }
+    const response = result.reduce((acc, taskRes) => {
+      const { id, name } = taskRes;
+      acc.push({ id, name });
+      return acc;
+    }, []);
+    this.logger.log(`Task created ${JSON.stringify(response)}`);
+    return response;
   }
 
   async getLog(query: GetTimeLogDto) {

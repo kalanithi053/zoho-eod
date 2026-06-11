@@ -1,5 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import axios, { AxiosRequestConfig, Method } from "axios";
+import { throwIfZohoError } from "../utils/zoho.utils";
+
 export interface RequestOptions {
   url: string;
   method: Method;
@@ -30,10 +32,11 @@ export class ApiService {
           Authorization: `Bearer ${bearerToken}`,
         }),
       },
+      validateStatus: () => true,
     };
 
     const response = await axios(config);
-
+    throwIfZohoError(response.data);
     return response.data;
   }
 }

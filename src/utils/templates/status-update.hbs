@@ -1,382 +1,333 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Daily Status Report</title>
 
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            color: #1b1b1e;
-            text-align: left !important;
-        }
+      body {
+        margin: 0;
+        padding: 0;
+        color: #1b1b1e;
+        text-align: left !important;
+      }
 
-        .container {
-            width: 100%;
-            margin: 0 auto;
-            background-color: #ffffff;
-            text-align: left !important;
-        }
+      .container {
+        width: 100%;
+        margin: 0 auto;
+        background-color: #ffffff;
+        text-align: left !important;
+      }
 
-        .header {
-            padding: 0px 24px 24px;
-            text-align: left !important;
-        }
+      .header {
+        padding: 0px 24px 24px;
+        text-align: left !important;
+      }
 
-        .report-date {
-            font-size: 12px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            color: #5c5f61;
-            margin-bottom: 8px;
-            text-align: left !important;
-        }
+      .report-date {
+        font-size: 12px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        color: #5c5f61;
+        margin-bottom: 8px;
+        text-align: left !important;
+      }
 
-        .title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #031635;
-            margin: 0;
-            text-align: left !important;
-        }
+      .title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #031635;
+        margin: 0;
+        text-align: left !important;
+      }
 
-        .summary-section {
-            padding: 0 24px 32px;
-        }
+      .summary-section {
+        padding: 0 24px 32px;
+      }
 
-        .summary-table {
-            width: 100%;
-            border-spacing: 0;
-        }
+      .summary-table {
+        width: 100%;
+        border-spacing: 0;
+      }
 
-        .summary-card {
-            border-radius: 8px;
-            padding: 24px;
-            box-sizing: border-box;
-        }
+      .summary-card {
+        border-radius: 8px;
+        padding: 24px;
+        box-sizing: border-box;
+      }
 
-        .primary-card {
-            background: #1a2b4b;
-            border-top: 4px solid #031635;
-            padding-bottom: 14px;
-        }
+      .primary-card {
+        background: #1a2b4b;
+        border-top: 4px solid #031635;
+        padding-bottom: 14px;
+      }
 
-        .secondary-card {
-            background: #e0e3e5;
-            border-top: 4px solid #5c5f61;
-        }
+      .secondary-card {
+        background: #e0e3e5;
+        border-top: 4px solid #5c5f61;
+      }
 
-        .card-header {
-            margin-bottom: 10px;
-        }
+      .card-header {
+        margin-bottom: 10px;
+      }
 
-        .card-label {
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+      .card-label {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
 
-        .primary-card .card-label {
-            color: #8293b8;
-        }
+      .primary-card .card-label {
+        color: #8293b8;
+      }
 
-        .secondary-card .card-label {
-            color: #626567;
-        }
+      .secondary-card .card-label {
+        color: #626567;
+      }
 
-        .card-value {
-            font-size: 20px;
-            font-weight: 700;
-            line-height: 1.2;
-        }
+      .card-value {
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.2;
+      }
 
-        .primary-card .card-value {
-            color: #ffffff;
-        }
+      .primary-card .card-value {
+        color: #ffffff;
+      }
 
-        .secondary-card .card-value {
-            color: #191c1e;
-        }
+      .secondary-card .card-value {
+        color: #191c1e;
+      }
 
-        .card-date {
-            margin-top: 6px;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: #444749;
-            letter-spacing: 0.05em;
-        }
+      .card-date {
+        margin-top: 6px;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #444749;
+        letter-spacing: 0.05em;
+      }
 
-        .summary {
-            padding: 0 24px 32px;
-            text-align: left !important;
-        }
+      .summary {
+        padding: 0 24px 32px;
+        text-align: left !important;
+      }
 
-        .summary-table {
-            width: 100%;
-            border-spacing: 0;
-            text-align: left !important;
-        }
+      .summary-section {
+        padding: 0 24px 32px;
+        display: flex;
+        gap: 16px;
+      }
 
-        .summary-table td {
-            width: 50%;
-            vertical-align: top;
-            padding: 0 8px;
-            text-align: left !important;
-        }
+      .summary-card {
+        border-radius: 8px;
+        padding: 24px;
+        box-sizing: border-box;
+        flex: 1;
+        /* equal width */
+        display: flex;
+        flex-direction: column;
+      }
 
-        .summary-table td:first-child {
-            padding-left: 0;
-        }
+      .card {
+        padding: 24px;
+        border-radius: 6px;
+        box-sizing: border-box;
+      }
 
-        .summary-table td:last-child {
-            padding-right: 0;
-        }
+      .card-primary {
+        background-color: #1a2b4b;
+        border-top: 4px solid #031635;
+        color: #ffffff;
+      }
 
-        .card {
-            padding: 24px;
-            border-radius: 6px;
-            box-sizing: border-box;
-        }
+      .card-secondary {
+        background-color: #e0e3e5;
+        border-top: 4px solid #5c5f61;
+        color: #191c1e;
+      }
 
-        .card-primary {
-            background-color: #1a2b4b;
-            border-top: 4px solid #031635;
-            color: #ffffff;
-        }
+      .card-label {
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        letter-spacing: 0.5px;
+      }
 
-        .card-secondary {
-            background-color: #e0e3e5;
-            border-top: 4px solid #5c5f61;
-            color: #191c1e;
-        }
+      .card-value {
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 1.2;
+        text-align: left !important;
+      }
 
-        .card-label {
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            letter-spacing: 0.5px;
-        }
+      .section-title {
+        padding: 0 24px;
+        margin-bottom: 16px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #5c5f61;
+      }
 
-        .card-value {
-            font-size: 20px;
-            font-weight: bold;
-            line-height: 1.2;
-            text-align: left !important;
-        }
+      .project {
+        margin: 0 24px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        overflow: hidden;
+      }
 
-        .section-title {
-            padding: 0 24px;
-            margin-bottom: 16px;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #5c5f61;
-        }
+      .project-header {
+        background-color: #e9e7eb;
+        padding: 12px 16px;
+        border-bottom: 1px solid #d1d5db;
+      }
 
-        .project {
-            margin: 0 24px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            overflow: hidden;
-        }
+      .project-header-table {
+        width: 100%;
+        border-spacing: 0;
+      }
 
-        .project-header {
-            background-color: #e9e7eb;
-            padding: 12px 16px;
-            border-bottom: 1px solid #d1d5db;
-        }
+      .project-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #031635;
+      }
 
-        .project-header-table {
-            width: 100%;
-            border-spacing: 0;
-        }
+      .status {
+        display: inline-block;
+        padding: 4px 8px;
+        font-size: 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        border-radius: 4px;
+      }
 
-        .project-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #031635;
-        }
+      .status-active {
+        background-color: #d8e2ff;
+        color: #081b3a;
+      }
 
-        .status {
-            display: inline-block;
-            padding: 4px 8px;
-            font-size: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            border-radius: 4px;
-        }
+      .status-progress {
+        background-color: #c4c7c9;
+        color: #444749;
+      }
 
-        .status-active {
-            background-color: #d8e2ff;
-            color: #081b3a;
-        }
+      .project-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
 
-        .status-progress {
-            background-color: #c4c7c9;
-            color: #444749;
-        }
+      .project-table th {
+        background-color: #f5f3f6;
+        text-align: left;
+        padding: 12px 16px;
+        font-size: 12px;
+        text-transform: uppercase;
+        color: #44474e;
+        border-bottom: 1px solid #d1d5db;
+      }
 
-        .project-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+      .project-table td {
+        padding: 16px;
+        border-bottom: 1px solid #e5e7eb;
+        vertical-align: top;
+        font-size: 14px;
+      }
 
-        .project-table th {
-            background-color: #f5f3f6;
-            text-align: left;
-            padding: 12px 16px;
-            font-size: 12px;
-            text-transform: uppercase;
-            color: #44474e;
-            border-bottom: 1px solid #d1d5db;
-        }
+      .project-table tr:last-child td {
+        border-bottom: none;
+      }
 
-        .project-table td {
-            padding: 16px;
-            border-bottom: 1px solid #e5e7eb;
-            vertical-align: top;
-            font-size: 14px;
-        }
+      .resource {
+        font-weight: bold;
+        color: #1b1b1e;
+      }
 
-        .project-table tr:last-child td {
-            border-bottom: none;
-        }
+      .duration {
+        color: #5c5f61;
+        white-space: nowrap;
+      }
 
-        .resource {
-            font-weight: bold;
-            color: #1b1b1e;
-        }
+      .task {
+        color: #44474e;
+        line-height: 1.5;
+      }
 
-        .duration {
-            color: #5c5f61;
-            white-space: nowrap;
-        }
-
-        .task {
-            color: #44474e;
-            line-height: 1.5;
-        }
-
-        .footer {
-            height: 24px;
-        }
-
-
+      .footer {
+        height: 24px;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-            <td align="center">
+      <tr>
+        <td align="center">
+          <div class="container">
+            <!-- Header -->
+            <div class="header">
+              <div class="report-date">Hi Team,</div>
 
-                <div class="container">
+              <h1 class="title">Executive Summary</h1>
+            </div>
 
-                    <!-- Header -->
-                    <div class="header">
-                        <div class="report-date">
-                            Hi Team,
-                        </div>
-
-
-                        <h1 class="title">
-                            Executive Summary
-                        </h1>
-                    </div>
-
-                    <!-- Summary Cards -->
-                    <div class="summary-section">
-                        <table class="summary-table" role="presentation">
-                            <tr>
-                                <td width="50%" style="padding-right:8px; vertical-align:top;">
-                                    <div class="summary-card primary-card">
-                                        <div class="card-header">
-                                            <div class="card-label"> Project </div>
-                                        </div>
-                                        <div class="card-value"> {{projectName}} </div>
-                                    </div>
-                                </td>
-                                <td width="50%" style="padding-left:8px; vertical-align:top;">
-                                    <div class="summary-card secondary-card">
-                                        <div class="card-header">
-                                            <div class="card-label"> Total Hours </div>
-                                        </div>
-                                        <div class="card-value"> {{totalHours}} </div>
-                                        <div class="card-date"> {{reportDate}} </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <!-- Section Title -->
-                    <div class="section-title">
-                        Project Breakdown
-                    </div>
-
-                    <!-- Project Alpha -->
-                    <div class="project">
-
-
-
-                        <table class="project-table">
-
-                            <thead>
-                                <tr>
-                                    <th >Resource</th>
-                                    <th >Duration</th>
-                                    <th>Task</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {{#each logs}}
-                                <tr>
-                                    <td class="resource">
-                                        {{this.name}}
-                                    </td>
-
-                                    <td class="duration">
-                                        {{this.duration}}
-                                    </td>
-
-                                    <td class="task">
-                                        {{this.task}}
-                                    </td>
-                                </tr>
-                                {{/each}}
-
-
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-
+            <!-- Summary Cards -->
+            <div class="summary-section">
+              <div class="summary-card primary-card">
+                <div class="card-header">
+                  <div class="card-label">Project</div>
                 </div>
+                <div class="card-value">{{projectName}}</div>
+              </div>
+              <div class="summary-card secondary-card">
+                <div class="card-header">
+                  <div class="card-label">Total Hours</div>
+                </div>
+                <div class="card-value">{{totalHours}}</div>
+                <div class="card-date">{{reportDate}}</div>
+              </div>
+            </div>
 
-            </td>
-        </tr>
+            <!-- Section Title -->
+            <div class="section-title">Project Breakdown</div>
+
+            <!-- Project Alpha -->
+            <div class="project">
+              <table class="project-table">
+                <thead>
+                  <tr>
+                    <th>Resource</th>
+                    <th>Duration</th>
+                    <th>Task</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {{#each logs}}
+                  <tr>
+                    <td class="resource">{{this.name}}</td>
+
+                    <td class="duration">{{this.duration}}</td>
+
+                    <td class="task">{{this.task}}</td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </td>
+      </tr>
     </table>
     <div class="header">
-        <div class="report-date">
-            Thanks & Regards,
-        </div>
+      <div class="report-date">Thanks & Regards,</div>
 
-        <div class="title">
-            {{resourceName}}
-        </div>
+      <div class="title">{{resourceName}}</div>
     </div>
-</body>
-
+  </body>
 </html>

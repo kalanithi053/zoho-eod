@@ -22,19 +22,15 @@ export class TrackService {
   ): Promise<{ id: string; name: string }[]> {
     const { portalId, projectID, body } = payload;
     this.logger.debug(`Adding Logs to specific task ${JSON.stringify(body)}`);
-    const responses = await Promise.all(
-      body.map((log) => this.zohoService.postLog(log, portalId, projectID)),
-    );
-    return responses;
+
+    return this.zohoService.postLog(body, portalId, projectID);
   }
 
   async postTask(payload: TrackModulePostDto) {
     const { portalId, projectID, body } = payload;
     this.logger.debug(`Creating task ${JSON.stringify(body)}`);
-    const responses = await Promise.all(
-      body.map((task) => this.zohoService.postTask(task, portalId, projectID)),
-    );
-    return responses;
+
+    return this.zohoService.postTask(body, portalId, projectID);
   }
 
   async getLog(query: GetTimeLogDto) {

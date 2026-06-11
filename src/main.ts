@@ -8,6 +8,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConsoleLogger } from "@nestjs/common";
 import { AppModule } from "./app.module";
 import { ResponseInterceptor } from "./common/interceptor";
+import { HttpExceptionFilter } from "./common/httpExceptionFilter";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -25,6 +26,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.useGlobalFilters(new HttpExceptionFilter());
   const swaggerConfig = new DocumentBuilder()
     .setTitle(`Zoho Eod App - (${nodeEnv})`)
     .setDescription("zoho-eod API Documentation")
