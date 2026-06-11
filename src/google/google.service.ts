@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { google } from 'googleapis';
-import * as nodemailer from 'nodemailer';
-import { recipent } from 'src/common/recipent';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { google } from "googleapis";
+import * as nodemailer from "nodemailer";
+import { recipent } from "../common/recipent";
 
 @Injectable()
 export class GoogleService {
@@ -11,19 +11,19 @@ export class GoogleService {
   constructor(private readonly configService: ConfigService) {}
 
   async sendMail(subject: string, html: string): Promise<void> {
-    const clientId = this.configService.getOrThrow<string>('GOOGLE_CLIENT_ID');
+    const clientId = this.configService.getOrThrow<string>("GOOGLE_CLIENT_ID");
     const clientSecret = this.configService.getOrThrow<string>(
-      'GOOGLE_CLIENT_SECRET',
+      "GOOGLE_CLIENT_SECRET",
     );
     const refreshToken = this.configService.getOrThrow<string>(
-      'GOOGLE_REFRESH_TOKEN',
+      "GOOGLE_REFRESH_TOKEN",
     );
-    const email = this.configService.getOrThrow<string>('GOOGLE_EMAIL');
+    const email = this.configService.getOrThrow<string>("GOOGLE_EMAIL");
 
     const oauth2Client = new google.auth.OAuth2(
       clientId,
       clientSecret,
-      this.configService.getOrThrow<string>('GOOGLE_OAUTH_API'),
+      this.configService.getOrThrow<string>("GOOGLE_OAUTH_API"),
     );
 
     oauth2Client.setCredentials({
@@ -33,7 +33,7 @@ export class GoogleService {
     const accessTokenResult = await oauth2Client.getAccessToken();
 
     if (!accessTokenResult.token) {
-      throw new Error('Unable to generate access token');
+      throw new Error("Unable to generate access token");
     }
 
     this.logger.debug(
@@ -41,11 +41,11 @@ export class GoogleService {
     );
 
     const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
+      host: "smtp.gmail.com",
       port: 465,
       secure: true,
       auth: {
-        type: 'OAuth2',
+        type: "OAuth2",
         user: email,
         clientId,
         clientSecret,
@@ -58,7 +58,7 @@ export class GoogleService {
 
     await transporter.verify();
 
-    this.logger.log('SMTP authentication successful');
+    this.logger.log("SMTP authentication successful");
 
     const result = await transporter.sendMail({
       from: email,

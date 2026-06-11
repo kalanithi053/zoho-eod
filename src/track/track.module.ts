@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
-import { CommonModule } from 'src/common/common.module';
-import { GoogleModule } from 'src/google/google.module';
-import { ZohoModule } from 'src/zoho/zoho.module';
-import { TrackController } from './track.controller';
-import { TrackService } from './track.service';
+import { Module } from "@nestjs/common";
+
+import { CommonModule } from "../common/common.module";
+import { GoogleModule } from "../google/google.module";
+import { ZohoModule } from "../zoho/zoho.module";
+import { TrackController } from "./track.controller";
+import { TrackService } from "./track.service";
 
 @Module({
   imports: [ZohoModule, CommonModule, GoogleModule],

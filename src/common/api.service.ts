@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import axios, { AxiosRequestConfig, Method } from 'axios';
+import { Injectable } from "@nestjs/common";
+import axios, { AxiosRequestConfig, Method } from "axios";
 export interface RequestOptions {
   url: string;
   method: Method;

@@ -1,18 +1,18 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsArray, IsObject, IsString, ValidateNested } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
+import { IsArray, IsObject, IsString, ValidateNested } from "class-validator";
 
 export class TrackModuleItemDto {
   @ApiProperty({
-    description: 'Zoho module ID (Task ID, Bug ID, etc.)',
-    example: '105855000004301162',
+    description: "Zoho module ID (Task ID, Bug ID, etc.)",
+    example: "105855000004301162",
   })
   @IsString()
   id!: string;
 
   @ApiProperty({
-    description: 'Module type',
-    example: 'task',
+    description: "Module type",
+    example: "task",
   })
   @IsString()
   type!: string;
@@ -20,15 +20,15 @@ export class TrackModuleItemDto {
 
 export class TrackModuleBodyDto {
   @ApiProperty({
-    description: 'Zoho user ID',
-    example: '105855000000885613',
+    description: "Zoho user ID",
+    example: "105855000000885613",
   })
   @IsString()
   owner_zpuid!: string;
 
   @ApiProperty({
-    description: 'Log date in YYYY-MM-DD format',
-    example: '2026-06-06',
+    description: "Log date in YYYY-MM-DD format",
+    example: "2026-06-06",
   })
   @IsString()
   date!: string;
@@ -41,7 +41,7 @@ export class TrackModuleBodyDto {
   // frompage!: string;
 
   @ApiProperty({
-    description: 'Zoho module details',
+    description: "Zoho module details",
     type: TrackModuleItemDto,
   })
   @IsObject()
@@ -66,15 +66,15 @@ export class TrackModuleBodyDto {
   // notes!: string;
 
   @ApiProperty({
-    description: 'Start time',
-    example: '01:02 AM',
+    description: "Start time",
+    example: "01:02 AM",
   })
   @IsString()
   start_time!: string;
 
   @ApiProperty({
-    description: 'End time',
-    example: '01:03 AM',
+    description: "End time",
+    example: "01:03 AM",
   })
   @IsString()
   end_time!: string;
@@ -89,21 +89,21 @@ export class TrackModuleBodyDto {
 
 export class TrackModuleDto {
   @ApiProperty({
-    description: 'Zoho Projects Portal ID',
-    example: '60012562414',
+    description: "Zoho Projects Portal ID",
+    example: "60012562414",
   })
   @IsString()
   portalId!: string;
 
   @ApiProperty({
-    description: 'Zoho Project ID',
-    example: '105855000004264414',
+    description: "Zoho Project ID",
+    example: "105855000004264414",
   })
   @IsString()
   projectID!: string;
 
   @ApiProperty({
-    description: 'List of time log entries',
+    description: "List of time log entries",
     type: [TrackModuleBodyDto],
   })
   @IsArray()
@@ -114,15 +114,15 @@ export class TrackModuleDto {
 
 export class TrackCreateDTO {
   @ApiProperty({
-    description: 'Task Name',
-    example: 'Task Name',
+    description: "Task Name",
+    example: "Task Name",
   })
   @IsString()
   name!: string;
 
   @ApiProperty({
-    description: 'Task owners',
-    example: { owners: [{ email: 'kalanithi@amwhiz.com' }] },
+    description: "Task owners",
+    example: { owners: [{ email: "kalanithi@amwhiz.com" }] },
   })
   @IsObject()
   owners_and_work!: { owners: { email: string }[] };
@@ -130,21 +130,21 @@ export class TrackCreateDTO {
 
 export class TrackModulePostDto {
   @ApiProperty({
-    description: 'Zoho Projects Portal ID',
-    example: '60012562414',
+    description: "Zoho Projects Portal ID",
+    example: "60012562414",
   })
   @IsString()
   portalId!: string;
 
   @ApiProperty({
-    description: 'Zoho Project ID',
-    example: '105855000004264414',
+    description: "Zoho Project ID",
+    example: "105855000004264414",
   })
   @IsString()
   projectID!: string;
 
   @ApiProperty({
-    description: 'List of task',
+    description: "List of task",
     type: [TrackCreateDTO],
   })
   @IsArray()

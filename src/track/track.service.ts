@@ -1,12 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { GetTimeLogDto } from 'src/dto/get-time-log.dto';
-import { TrackModuleDto, TrackModulePostDto } from 'src/dto/track.dto';
-import { GoogleService } from 'src/google/google.service';
-import { sendResponse } from 'src/helper/getLog.builder';
-import { generateSubject } from 'src/helper/stringManipulation.helper';
-import { StatusMailPayload } from 'src/interfaces/report.interface';
-import { htmlGenerator } from 'src/utils/mail-template';
-import { ZohoService } from 'src/zoho/zoho.service';
+import { Injectable, Logger } from "@nestjs/common";
+import { GetTimeLogDto } from "../dto/get-time-log.dto";
+import { TrackModuleDto, TrackModulePostDto } from "../dto/track.dto";
+import { GoogleService } from "../google/google.service";
+import { sendResponse } from "../helper/getLog.builder";
+import { generateSubject } from "../helper/stringManipulation.helper";
+import { StatusMailPayload } from "../interfaces/report.interface";
+import { htmlGenerator } from "../utils/mail-template";
+import { ZohoService } from "../zoho/zoho.service";
 
 @Injectable()
 export class TrackService {

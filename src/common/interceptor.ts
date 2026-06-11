@@ -3,10 +3,10 @@ import {
   ExecutionContext,
   Injectable,
   NestInterceptor,
-} from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { ApiResponse } from 'src/interfaces/apiResponse.interface';
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+import { ApiResponse } from "../interfaces/apiResponse.interface";
 
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<
@@ -21,7 +21,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<
     const response = ctx?.getResponse();
     return next.handle().pipe(
       map((data: any) => {
-        const message = data?.message || 'Request processed successfully';
+        const message = data?.message || "Request processed successfully";
         delete data?.message;
         return {
           success: true,

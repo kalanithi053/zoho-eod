@@ -1,9 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { ApiService } from 'src/common/api.service';
-import { GetTimeLogDto } from 'src/dto/get-time-log.dto';
-import { TrackCreateDTO, TrackModuleBodyDto } from 'src/dto/track.dto';
-import { getLogBuiilder } from 'src/helper/getLog.builder';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { ApiService } from "../common/api.service";
+import { GetTimeLogDto } from "../dto/get-time-log.dto";
+import { TrackCreateDTO, TrackModuleBodyDto } from "../dto/track.dto";
+import { getLogBuiilder } from "../helper/getLog.builder";
 
 @Injectable()
 export class ZohoService {
@@ -30,13 +30,13 @@ export class ZohoService {
 
     const response = await this.retry(() =>
       this.apiService.request({
-        url: `${this.getConfig('ZOHO_AUTH_URL')}/oauth/v2/token`,
-        method: 'POST',
+        url: `${this.getConfig("ZOHO_AUTH_URL")}/oauth/v2/token`,
+        method: "POST",
         params: {
-          refresh_token: this.getConfig('ZOHO_REFRESH_TOKEN'),
-          client_id: this.getConfig('ZOHO_CLIENT_ID'),
-          client_secret: this.getConfig('ZOHO_CLIENT_SECRET'),
-          grant_type: 'refresh_token',
+          refresh_token: this.getConfig("ZOHO_REFRESH_TOKEN"),
+          client_id: this.getConfig("ZOHO_CLIENT_ID"),
+          client_secret: this.getConfig("ZOHO_CLIENT_SECRET"),
+          grant_type: "refresh_token",
         },
       }),
     );
@@ -44,14 +44,14 @@ export class ZohoService {
     this.accessToken = response.access_token;
     this.expiresAt = now + (response.expires_in - 60) * 1000;
 
-    this.logger.log('Zoho access token refreshed');
+    this.logger.log("Zoho access token refreshed");
 
-    return this.accessToken ?? '';
+    return this.accessToken ?? "";
   }
 
   async requestZohoProject<T = any>(options: {
     url: string;
-    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
     params?: Record<string, any>;
     data?: any;
     headers?: Record<string, string>;
@@ -60,7 +60,7 @@ export class ZohoService {
 
     return this.apiService.request<T>({
       ...options,
-      url: `${this.getConfig('ZOHO_PROJECT_API_BASE_URL')}${options.url}`,
+      url: `${this.getConfig("ZOHO_PROJECT_API_BASE_URL")}${options.url}`,
       headers: {
         ...options.headers,
         Authorization: `Zoho-oauthtoken ${accessToken}`,
@@ -77,7 +77,7 @@ export class ZohoService {
     } catch (error: any) {
       if (
         retries > 0 &&
-        ['ECONNRESET', 'ETIMEDOUT', 'ECONNABORTED'].includes(error.code)
+        ["ECONNRESET", "ETIMEDOUT", "ECONNABORTED"].includes(error.code)
       ) {
         await new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -91,12 +91,12 @@ export class ZohoService {
   async postLog(body: TrackModuleBodyDto, portalId: string, projectId: string) {
     const result = await this.requestZohoProject({
       url: `portal/${portalId}/projects/${projectId}/log`,
-      method: 'POST',
+      method: "POST",
       data: {
         ...body,
-        frompage: 'taskdetails',
-        notes: '<div>Worked on API integration</div>',
-        bill_status: 'Billable',
+        frompage: "taskdetails",
+        notes: "<div>Worked on API integration</div>",
+        bill_status: "Billable",
         for_timer: false,
       },
     });
@@ -107,7 +107,7 @@ export class ZohoService {
   async postTask(body: TrackCreateDTO, portalId: string, projectId: string) {
     const result = await this.requestZohoProject({
       url: `portal/${portalId}/projects/${projectId}/tasks`,
-      method: 'POST',
+      method: "POST",
       data: body,
     });
     const { id, name } = result;
@@ -119,7 +119,7 @@ export class ZohoService {
     const { portalId, userId, startDate, endDate } = query;
     const response = await this.requestZohoProject({
       url: `portal/${portalId}/projects/105855000004264414/timelogs`,
-      method: 'GET',
+      method: "GET",
       params: getLogBuiilder(query),
     });
     this.logger.log(
