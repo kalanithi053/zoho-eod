@@ -4,7 +4,19 @@ import path from "path";
 import { StatusMailPayload } from "../interfaces/report.interface";
 
 export const htmlGenerator = (data: StatusMailPayload) => {
-  const templatePath = path.join(__dirname, "templates", "status-update.hbs");
+  const templatePathCandidates = [
+    path.join(__dirname, "templates", "status-update.hbs"),
+    path.join(__dirname, "..", "..", "utils", "templates", "status-update.hbs"),
+  ];
+
+  const templatePath = templatePathCandidates.find((candidate) =>
+    fs.existsSync(candidate),
+  );
+
+  if (!templatePath) {
+    throw new Error("Status update template not found");
+  }
+
   const templateSource = fs.readFileSync(templatePath, "utf8");
 
   // Compile template
