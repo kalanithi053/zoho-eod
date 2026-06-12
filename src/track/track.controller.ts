@@ -54,7 +54,7 @@ export class TrackController {
     return this.trackService.postLogWithTaskMail(payload);
   }
 
-  @Post("corn/post-report-mail")
+  @Post("automate/post-report-mail")
   @ApiOperation({ summary: "Fetch logs and send status mail" })
   @ApiBody({
     type: [TimeLogTaskDto],
