@@ -119,6 +119,11 @@ export class TrackService {
     const projectDetail: any = await this.zohoService.fetchCurrentProject();
     const date = format(new Date(), "yyyy-MM-dd");
     this.logger.debug(`logger date ${date} ${JSON.stringify(body)}`);
+    if (!projectDetail.id) {
+      throw new BadRequestException(
+        `No Zoho Project Board Available for this ${date}`,
+      );
+    }
     return this.postLogWithTaskMail({
       projectID: projectDetail?.id,
       date,

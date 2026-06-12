@@ -19,25 +19,11 @@ export const buildLogPayload = (
   end_time: string,
 ) => ({ ...rest, ...BASE_LOG_PAYLOAD, start_time, end_time });
 
-function timeToMinutes(time: string): number {
-  const [timePart, period] = time.trim().split(" ");
-  const [h, m] = timePart.split(":").map(Number);
-  const hours =
-    period?.toUpperCase() === "PM" && h !== 12
-      ? h + 12
-      : period?.toUpperCase() === "AM" && h === 12
-        ? 0
-        : h;
-  return hours * 60 + m;
-}
-
-function minutesToTime(minutes: number): string {
-  const totalHours = Math.floor(minutes / 60);
-  const h = totalHours % 12 || 12;
-  const m = String(minutes % 60).padStart(2, "0");
-  const period = totalHours < 12 ? "AM" : "PM";
-  return `${String(h).padStart(2, "0")}:${m} ${period}`;
-}
+const formateTimes = (time: string): string => {
+  const [hour, period] = time.split(" ");
+  const [h, m] = hour.split(":");
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")} ${period}`;
+};
 
 export const buildLogPayloads = (
   body: TrackModuleBodyDto[],
@@ -60,15 +46,7 @@ export const buildLogPayloads = (
 
       cursor = skipBreaks(segments[segments.length - 1].end);
     } else {
-      const startMinutes = timeToMinutes(start_time);
-      const endMinutes = timeToMinutes(end_time);
-      payloads.push(
-        buildLogPayload(
-          rest,
-          minutesToTime(startMinutes),
-          minutesToTime(endMinutes),
-        ),
-      );
+      buildLogPayload(rest, formateTimes(start_time), formateTimes(end_time));
     }
   }
   return payloads;
