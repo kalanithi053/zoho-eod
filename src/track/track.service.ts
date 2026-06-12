@@ -20,6 +20,7 @@ import { ConfigService } from "@nestjs/config";
 import { buildLogPayloads } from "../utils/log.utils";
 import { format } from "date-fns";
 import { TimeLogTaskDto } from "../dto/time-log-task.dto";
+import { isValidDuration } from "../utils/time.utils";
 
 @Injectable()
 export class TrackService {
@@ -80,6 +81,29 @@ export class TrackService {
       );
     }
 
+    let message = "";
+    body.forEach((item, index) => {
+      const hasDuration = item.duration !== undefined && item.duration !== null;
+      const hasStartTime = !!item.startTime;
+      const hasEndTime = !!item.endTime;
+
+      if (!hasDuration && !hasStartTime && !hasEndTime) {
+        message += `body.${index}: Duration or startTime and endTime must be provided.`;
+      }
+
+      if (hasDuration && !isValidDuration(String(item.duration))) {
+        message += `body.${index}: duration "${item.duration}" must be a valid number (0.1 to infinity).`;
+      }
+
+      if (hasDuration && (hasStartTime || hasEndTime)) {
+        message += `body.${index}: Provide either duration or startTime and endTime, not both.`;
+      }
+      if (!hasStartTime || !hasEndTime) {
+        message += `body.${index}: ${!hasStartTime ? "StartTime is required" : "EndTime is required"}`;
+      }
+    });
+    if (message) throw new BadRequestException(message);
+
     const taskpayload = body.map((data: TaskLogDto) => ({
       name: data.task,
       owners_and_work: { owners: [{ email: email }] },
@@ -115,7 +139,7 @@ export class TrackService {
     });
   }
 
-  async handleCorn(body: TimeLogTaskDto[]) {
+  async handleAutomateReportGenerator(body: TimeLogTaskDto[]) {
     const projectDetail: any = await this.zohoService.fetchCurrentProject();
     const date = format(new Date(), "yyyy-MM-dd");
     this.logger.debug(`logger date ${date} ${JSON.stringify(body)}`);

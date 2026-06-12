@@ -54,3 +54,8 @@ export const splitIntoSegments = (
 
   return segments;
 };
+
+export const isValidDuration = (duration: string): boolean => {
+  const num = parseFloat(duration);
+  return !isNaN(num) && num >= 0.1;
+};

@@ -60,7 +60,7 @@ export class TrackController {
     type: [TimeLogTaskDto],
     description: "List of tasks with time log entries",
   })
-  async handleCorn(@Body() payload: TimeLogTaskDto[]) {
-    return this.trackService.handleCorn(payload);
+  async handleAutomate(@Body() payload: TimeLogTaskDto[]) {
+    return this.trackService.handleAutomateReportGenerator(payload);
   }
 }
