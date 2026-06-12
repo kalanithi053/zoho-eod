@@ -32,8 +32,7 @@ export const buildLogPayloads = (
   let cursor = WORK_START;
 
   for (const { start_time = "", end_time = "", duration, ...rest } of body) {
-    const isDurationOnly =
-      !start_time && !end_time && Number.isSafeInteger(duration);
+    const isDurationOnly = !start_time && !end_time && !Number.isNaN(duration);
 
     if (isDurationOnly) {
       const segments = splitIntoSegments(cursor, Math.round(duration * 60));
