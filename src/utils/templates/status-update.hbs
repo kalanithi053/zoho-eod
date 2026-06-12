@@ -1,5 +1,5 @@
-<!DOCTYPE html>
 <html lang="en">
+
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,8 +21,9 @@
       }
 
       .header {
-        padding: 0px 24px 24px;
+        padding: 16px 8px;
         text-align: left !important;
+        padding-bottom: 8px;
       }
 
       .report-date {
@@ -42,23 +43,22 @@
         text-align: left !important;
       }
 
-
       .summary-table {
-        width: 100%;
         border-spacing: 0;
+        padding: 12px 8px;
+        width: 100%;
       }
 
       .summary-card {
         border-radius: 8px;
         padding: 24px;
         box-sizing: border-box;
-        min-width: 40% !important;
+        min-width: 100%;
       }
 
       .primary-card {
         background: #1a2b4b;
-        border-top: 4px solid #031635;
-        padding-bottom: 14px;
+        border-top: 4px solid #979b9e;
       }
 
       .secondary-card {
@@ -86,8 +86,8 @@
       }
 
       .card-value {
-        font-size: 20px;
-        font-weight: 700;
+        font-size: 18px;
+        font-weight: 600;
         line-height: 1.2;
       }
 
@@ -106,19 +106,6 @@
         text-transform: uppercase;
         color: #444749;
         letter-spacing: 0.05em;
-      }
-
-      .summary {
-        padding: 0 24px 32px;
-        text-align: left !important;
-      }
-
-      .summary-section {
-        padding: 0 24px 32px;
-        display: flex;
-        justify-content: space-between;
-        gap: 16px;
-        width: 100%;
       }
 
       .card {
@@ -155,7 +142,7 @@
       }
 
       .section-title {
-        padding: 0 24px;
+        padding: 0 8px;
         margin-bottom: 16px;
         font-size: 12px;
         font-weight: bold;
@@ -165,7 +152,7 @@
       }
 
       .project {
-        margin: 0 24px 12px;
+        margin: 8px 8px;
         border: 1px solid #d1d5db;
         border-radius: 6px;
         overflow: hidden;
@@ -215,7 +202,7 @@
       .project-table th {
         background-color: #f5f3f6;
         text-align: left;
-        padding: 12px 16px;
+        padding: 8px 12px;
         font-size: 12px;
         text-transform: uppercase;
         color: #44474e;
@@ -223,7 +210,7 @@
       }
 
       .project-table td {
-        padding: 16px;
+        padding: 8px 12px;
         border-bottom: 1px solid #e5e7eb;
         vertical-align: top;
         font-size: 14px;
@@ -243,13 +230,70 @@
         white-space: nowrap;
       }
 
+      .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+      }
+
       .task {
         color: #44474e;
         line-height: 1.5;
       }
 
+      .summary-table:first-child tbody {
+        padding-right: 12px;
+      }
+
+      .summary-row:first-child td {
+        margin-right: 12px;
+      }
+
       .footer {
         height: 24px;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .mobile-card {
+          display: block !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+        }
+
+        .summary-table,
+        .summary-table tbody,
+        .summary-table tr,
+        .summary-table td {
+          display: block !important;
+        }
+
+        .summary-table td {
+          padding: 12px 8px !important;
+        }
+
+        .summary-row,
+        .summary-row td {
+          display: block !important;
+        }
+
+        .project-table th,
+        .project-table td {
+          padding: 8px !important;
+          font-size: 12px !important;
+        }
+
+        .title {
+          font-size: 18px !important;
+        }
+
+        .project-title {
+          font-size: 16px !important;
+        }
+
+        .spacer_column {
+          padding: 0 !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
       }
     </style>
   </head>
@@ -265,23 +309,38 @@
 
               <h1 class="title">Executive Summary</h1>
             </div>
-
-            <!-- Summary Cards -->
-            <div class="summary-section">
-              <div class="summary-card primary-card">
-                <div class="card-header">
-                  <div class="card-label">Project</div>
-                </div>
-                <div class="card-value">{{projectName}}</div>
-              </div>
-              <div class="summary-card secondary-card">
-                <div class="card-header">
-                  <div class="card-label">Total Hours</div>
-                </div>
-                <div class="card-value">{{totalHours}}</div>
-                <div class="card-date">{{reportDate}}</div>
-              </div>
-            </div>
+            <table
+              role="presentation"
+              cellpadding="0"
+              cellspacing="0"
+              border="0"
+              class="summary-table"
+            >
+              <tbody class="summary">
+                <tr class="summary-row">
+                  <td
+                    class="summary-card primary-card mobile-card"
+                    style="padding-right:8px; width: 49%;"
+                  >
+                    <div class="card-header">
+                      <div class="card-label">Project</div>
+                    </div>
+                    <div class="card-value">{{projectName}}</div>
+                  </td>
+                  <td width="2%" class="spacer_column">&nbsp;</td>
+                  <td
+                    class="summary-card secondary-card mobile-card"
+                    style="width: 49%;"
+                  >
+                    <div class="card-header">
+                      <div class="card-label">Total Hours</div>
+                    </div>
+                    <div class="card-value">{{totalHours}}</div>
+                    <div class="card-date">{{reportDate}}</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
             <!-- Section Title -->
             <div class="section-title">Project Breakdown</div>
@@ -299,13 +358,13 @@
 
                 <tbody>
                   {{#each logs}}
-                  <tr>
-                    <td class="resource">{{this.name}}</td>
+                    <tr>
+                      <td class="resource">{{this.name}}</td>
 
-                    <td class="duration">{{this.duration}}</td>
+                      <td class="duration">{{this.duration}}</td>
 
-                    <td class="task">{{this.task}}</td>
-                  </tr>
+                      <td class="task">{{this.task}}</td>
+                    </tr>
                   {{/each}}
                 </tbody>
               </table>
@@ -320,4 +379,5 @@
       <div class="title">{{resourceName}}</div>
     </div>
   </body>
+
 </html>
