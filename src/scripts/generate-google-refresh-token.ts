@@ -10,7 +10,12 @@ const oauth2Client = new google.auth.OAuth2(
 const authUrl = oauth2Client.generateAuthUrl({
   access_type: "offline",
   prompt: "consent",
-  scope: ["https://mail.google.com/"],
+  scope: [
+    "https://mail.google.com/",
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/spreadsheets",
+  ],
 });
 
 console.log("Authorize this app by visiting this URL:");

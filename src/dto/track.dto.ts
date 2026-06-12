@@ -1,6 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsObject, IsString, ValidateNested } from "class-validator";
+import {
+  IsArray,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from "class-validator";
 
 export class TrackModuleItemDto {
   @ApiProperty({
@@ -33,13 +40,6 @@ export class TrackModuleBodyDto {
   @IsString()
   date!: string;
 
-  // @ApiProperty({
-  //   description: 'Source page from which the time log is created',
-  //   example: 'taskdetails',
-  // })
-  // @IsString()
-  // frompage!: string;
-
   @ApiProperty({
     description: "Zoho module details",
     type: TrackModuleItemDto,
@@ -49,26 +49,11 @@ export class TrackModuleBodyDto {
   @Type(() => TrackModuleItemDto)
   module!: TrackModuleItemDto;
 
-  // @ApiProperty({
-  //   description: 'Billing status of the time log',
-  //   example: 'Billable',
-  // })
-  // @IsString()
-  // @IsOptional()
-  // bill_status!: string;
-
-  // @ApiProperty({
-  //   description: 'Notes associated with the time log',
-  //   example: '<div>Worked on API integration</div>',
-  // })
-  // @IsString()
-  // @IsOptional()
-  // notes!: string;
-
   @ApiProperty({
     description: "Start time",
     example: "01:02 AM",
   })
+  @IsOptional()
   @IsString()
   start_time!: string;
 
@@ -76,15 +61,14 @@ export class TrackModuleBodyDto {
     description: "End time",
     example: "01:03 AM",
   })
+  @IsOptional()
   @IsString()
   end_time!: string;
 
-  // @ApiProperty({
-  //   description: 'Whether the log was created using a timer',
-  //   example: false,
-  // })
-  // @IsBoolean()
-  // for_timer!: boolean;
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 }) // ← explicitly allow decimals
+  @Type(() => Number)
+  duration!: number;
 }
 
 export class TrackModuleDto {

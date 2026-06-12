@@ -19,5 +19,11 @@
       "src": "/(.*)",
       "dest": "api/index.ts"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/v1/track/sheet-to-report",
+      "schedule": "12 9 * * *"
+    }
   ]
 }

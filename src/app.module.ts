@@ -6,9 +6,11 @@ import { GoogleModule } from "./google/google.module";
 import { TrackModule } from "./track/track.module";
 import { ZohoModule } from "./zoho/zoho.module";
 import { ZohoService } from "./zoho/zoho.service";
+import { ScheduleModule } from "@nestjs/schedule";
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
     }),

@@ -4,6 +4,7 @@ import { ApiService } from "../common/api.service";
 import { GetTimeLogDto } from "../dto/get-time-log.dto";
 import { TrackCreateDTO, TrackModuleBodyDto } from "../dto/track.dto";
 import { getLogBuiilder } from "../helper/getLog.builder";
+import { buildLogPayloads } from "../utils/log.utils";
 
 @Injectable()
 export class ZohoService {
@@ -56,15 +57,16 @@ export class ZohoService {
     data?: any;
     headers?: Record<string, string>;
   }): Promise<T> {
-    const accessToken = await this.getAccessToken();
+    const header = { ...options.headers };
+    if (!options.headers?.Authorization) {
+      const accessToken = await this.getAccessToken();
+      header.Authorization = `Zoho-oauthtoken ${accessToken}`;
+    }
 
     return this.apiService.request<T>({
       ...options,
       url: `${this.getConfig("ZOHO_PROJECT_API_BASE_URL")}${options.url}`,
-      headers: {
-        ...options.headers,
-        Authorization: `Zoho-oauthtoken ${accessToken}`,
-      },
+      headers: header,
     });
   }
   private async retry<T>(
@@ -88,43 +90,95 @@ export class ZohoService {
     }
   }
 
-  async postLog(body: TrackModuleBodyDto, portalId: string, projectId: string) {
+  async postBulkLog(portalId: string, body: Record<string, any>[]) {
+    this.logger.log(`Posting bulk log: ${JSON.stringify(body)}`);
+
+    const formData = new FormData();
+    formData.append("log_object", JSON.stringify(body));
     const result = await this.requestZohoProject({
-      url: `portal/${portalId}/projects/${projectId}/log`,
+      url: `portal/${portalId}/addbulktimelogs`,
       method: "POST",
-      data: {
-        ...body,
-        frompage: "taskdetails",
-        notes: "<div>Worked on API integration</div>",
-        bill_status: "Billable",
-        for_timer: false,
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
       },
     });
-    this.logger.log(`Log added ${JSON.stringify(result)}`);
+
+    this.logger.log(`Bulk log added: ${JSON.stringify(result)}`);
     return result;
   }
 
-  async postTask(body: TrackCreateDTO, portalId: string, projectId: string) {
-    const result = await this.requestZohoProject({
-      url: `portal/${portalId}/projects/${projectId}/tasks`,
-      method: "POST",
-      data: body,
-    });
-    const { id, name } = result;
-    this.logger.log(`Task created ${JSON.stringify({ id, name })}`);
-    return { id, name };
+  async postLog(
+    body: TrackModuleBodyDto[],
+    portalId: string,
+    projectId: string,
+  ) {
+    const payloads = buildLogPayloads(body);
+    const results = [];
+
+    for (const element of payloads) {
+      results.push(
+        await this.requestZohoProject({
+          url: `portal/${portalId}/projects/${projectId}/log`,
+          method: "POST",
+          data: element,
+        }),
+      );
+    }
+
+    this.logger.log(`Log added ${JSON.stringify(results)}`);
+    return results;
+  }
+
+  async postTask(body: TrackCreateDTO[], portalId: string, projectId: string) {
+    const accessToken = await this.getAccessToken();
+    const result = await Promise.all(
+      body.map((task) =>
+        this.requestZohoProject({
+          url: `portal/${portalId}/projects/${projectId}/tasks`,
+          method: "POST",
+          data: task,
+          headers: { Authorization: `Zoho-oauthtoken ${accessToken}` },
+        }),
+      ),
+    );
+
+    const response = result.reduce((acc, taskRes) => {
+      const { id, name, owners_and_work } = taskRes;
+      acc.push({ id, name, ownerId: owners_and_work?.owners?.[0]?.zpuid });
+      return acc;
+    }, []);
+    this.logger.log(`Task created ${JSON.stringify(response)}`);
+    return response;
   }
 
   async getLog(query: GetTimeLogDto) {
-    const { portalId, userId, startDate, endDate } = query;
+    const { portalId, userId, startDate } = query;
     const response = await this.requestZohoProject({
       url: `portal/${portalId}/projects/105855000004264414/timelogs`,
       method: "GET",
       params: getLogBuiilder(query),
     });
     this.logger.log(
-      `Total hours ${response.log_hours?.total_hours} from ${startDate} to ${endDate} for ${userId}`,
+      `Total hours ${response.log_hours?.total_hours} from ${startDate} for ${userId}`,
     );
     return response;
+  }
+
+  async fetchCurrentProject() {
+    const portalId = this.getConfig("ZOHO_PROJECT_PORTAL_ID");
+    const response = await this.requestZohoProject({
+      url: `portal/${portalId}/projects`,
+      method: "GET",
+    });
+    const now = new Date();
+    const project = response.find((project: any) => {
+      const startDate = new Date(project.start_date);
+      return (
+        startDate.getFullYear() === now.getFullYear() &&
+        startDate.getMonth() === now.getMonth()
+      );
+    });
+    return project;
   }
 }

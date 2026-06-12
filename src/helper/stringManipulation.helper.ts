@@ -4,6 +4,7 @@ export const generateSubject = (name: string, date: string) => {
     {
       month: "long",
       year: "numeric",
+      day: "numeric",
     },
   )}`;
 };

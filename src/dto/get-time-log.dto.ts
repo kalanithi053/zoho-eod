@@ -1,5 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { Type } from "class-transformer";
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsEmail,
+  IsDateString,
+  IsArray,
+  ValidateNested,
+} from "class-validator";
 
 export class GetTimeLogDto {
   @ApiProperty({
@@ -25,10 +34,63 @@ export class GetTimeLogDto {
   })
   @IsString()
   startDate!: string;
+}
 
+export class TaskLogDto {
   @ApiProperty({
-    example: "2026-06-07",
+    example: "Task 93571: MS Co-sell Create - Zoho",
   })
   @IsString()
-  endDate!: string;
+  task!: string;
+
+  @ApiProperty({
+    example: 4.5,
+  })
+  @IsNumber()
+  @IsOptional()
+  duration!: number;
+
+  @ApiProperty({
+    description: "Start time",
+    example: "01:02 AM",
+  })
+  @IsOptional()
+  @IsString()
+  startTime!: string;
+
+  @ApiProperty({
+    description: "End time",
+    example: "01:03 AM",
+  })
+  @IsOptional()
+  @IsString()
+  endTime!: string;
+}
+
+export class CreateEodDto {
+  @ApiProperty({
+    example: "105855000004264414",
+  })
+  @IsString()
+  projectID!: string;
+
+  @ApiProperty({
+    example: "kalanithi@amwhiz.com",
+  })
+  @IsEmail()
+  email!: string;
+
+  @ApiProperty({
+    example: "2026-06-11",
+  })
+  @IsDateString()
+  date!: string;
+
+  @ApiProperty({
+    type: [TaskLogDto],
+  })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TaskLogDto)
+  body!: TaskLogDto[];
 }
