@@ -83,7 +83,7 @@ export class TrackController {
     return this.handleAutomate(rows as unknown as TimeLogTaskDto[]);
   }
 
-  @Cron("0 9 * * *")
+  @Cron("33 14 * * *")
   handleDailyTask() {
     this.logger.log("Daily 9 PM cron job triggered!");
     return this.sheetToReport();
