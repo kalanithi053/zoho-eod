@@ -8,6 +8,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConsoleLogger } from "@nestjs/common";
 import { AppModule } from "./app.module";
 import { HttpExceptionFilter } from "./common/httpExceptionFilter";
+import { GoogleService } from "./google/google.service";
 import { ResponseInterceptor } from "./common/interceptor";
 
 async function bootstrap() {
@@ -17,8 +18,11 @@ async function bootstrap() {
     }),
   });
   const config = app.get(ConfigService);
+  const googleService = app.get(GoogleService); // 👈 resolve from DI container
+
   const port = config.get<number>("PORT") ?? 3000;
   const nodeEnv = config.get<string>("NODE_ENV") ?? "DEV";
+
   app.setGlobalPrefix("api/v1");
   app.useGlobalPipes(
     new ValidationPipe({
@@ -26,7 +30,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(googleService));
   const swaggerConfig = new DocumentBuilder()
     .setTitle(`Zoho Eod App - (${nodeEnv})`)
     .setDescription("zoho-eod API Documentation")

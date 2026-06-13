@@ -10,6 +10,7 @@ import express, { Request, Response } from "express";
 import { AppModule } from "../src/app.module";
 import { ResponseInterceptor } from "../src/common/interceptor";
 import { HttpExceptionFilter } from "../src/common/httpExceptionFilter";
+import { GoogleService } from "../src/google/google.service";
 
 let cachedApp: express.Express | null = null;
 
@@ -29,6 +30,7 @@ async function bootstrap(): Promise<express.Express> {
   );
 
   const config = app.get(ConfigService);
+  const googleService = app.get(GoogleService);
   const nodeEnv = config.get<string>("NODE_ENV") ?? "DEV";
 
   app.setGlobalPrefix("api/v1");
@@ -39,7 +41,7 @@ async function bootstrap(): Promise<express.Express> {
       transform: true,
     }),
   );
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(googleService));
   const swaggerConfig = new DocumentBuilder()
     .setTitle(`Zoho Eod App - (${nodeEnv})`)
     .setDescription("zoho-eod API Documentation")

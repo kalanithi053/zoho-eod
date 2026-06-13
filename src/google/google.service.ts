@@ -30,7 +30,7 @@ export class GoogleService {
     return google.sheets({ version: "v4", auth });
   }
 
-  async sendMail(subject: string, html: string): Promise<void> {
+  async configTransporter() {
     const oauth2Client = this.getOAuth2Client();
     const accessTokenResult = await oauth2Client.getAccessToken();
 
@@ -42,9 +42,8 @@ export class GoogleService {
     const clientSecret = this.getConfig("GOOGLE_CLIENT_SECRET");
     const refreshToken = this.getConfig("GOOGLE_REFRESH_TOKEN");
     const email = this.getConfig("GOOGLE_EMAIL");
-    const nodeEnv = this.getConfig("NODE_ENV");
 
-    const transporter = nodemailer.createTransport({
+    return nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 465,
       secure: true,
@@ -57,7 +56,11 @@ export class GoogleService {
         accessToken: accessTokenResult.token,
       },
     });
+  }
 
+  async sendMail(subject: string, html: string): Promise<void> {
+    const transporter = await this.configTransporter();
+    const nodeEnv = this.getConfig("NODE_ENV");
     await transporter.verify();
 
     const emails = recipent[nodeEnv as keyof typeof recipent] ?? recipent.DEV;

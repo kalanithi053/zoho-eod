@@ -17,10 +17,13 @@ import { StatusMailPayload } from "../interfaces/report.interface";
 import { htmlGenerator } from "../utils/mail-template";
 import { ZohoService } from "../zoho/zoho.service";
 import { ConfigService } from "@nestjs/config";
-import { buildLogPayloads } from "../utils/log.utils";
+import {
+  buildLogPayloads,
+  bulkUploadPayloadBuilder,
+  throwErrorDurations,
+} from "../utils/log.utils";
 import { format } from "date-fns";
 import { TimeLogTaskDto } from "../dto/time-log-task.dto";
-import { isValidDuration } from "../utils/time.utils";
 
 @Injectable()
 export class TrackService {
@@ -80,30 +83,9 @@ export class TrackService {
         `Duplicate task names found: ${[...new Set(duplicates)].join(", ")}`,
       );
     }
-
-    let message = "";
-    body.forEach((item, index) => {
-      const hasDuration = item.duration !== undefined && item.duration !== null;
-      const hasStartTime = !!item.startTime;
-      const hasEndTime = !!item.endTime;
-
-      if (!hasDuration && !hasStartTime && !hasEndTime) {
-        message += `body.${index}: Duration or startTime and endTime must be provided.`;
-      }
-
-      if (hasDuration && !isValidDuration(String(item.duration))) {
-        message += `body.${index}: duration "${item.duration}" must be a valid number (0.1 to infinity).`;
-      }
-
-      if (hasDuration && (hasStartTime || hasEndTime)) {
-        message += `body.${index}: Provide either duration or startTime and endTime, not both.`;
-      }
-      if (!hasDuration && (!hasStartTime || !hasEndTime)) {
-        message += `body.${index}: ${!hasStartTime ? "StartTime is required" : "EndTime is required"}`;
-      }
-    });
-    if (message) throw new BadRequestException(message);
-
+    throwErrorDurations(body);
+    if (!body?.length)
+      throw new BadRequestException(`Task and report does not updated `);
     const taskpayload = body.map((data: TaskLogDto) => ({
       name: data.task,
       owners_and_work: { owners: [{ email: email }] },
@@ -113,24 +95,12 @@ export class TrackService {
       projectID,
       body: taskpayload,
     });
-    const logOnTask = responseTask?.map((task: any) => {
-      const currentDuration = body.find((item: any) => item.task === task.name);
-      const {
-        endTime = "",
-        startTime = "",
-        duration = 0,
-      } = currentDuration ?? {};
-      const data: Record<string, any> = {
-        owner_zpuid: task.ownerId,
-        date,
-        module: { id: task.id, type: "task" },
-      };
-      if (endTime) data.end_time = endTime;
-      if (startTime) data.start_time = startTime;
-      if (duration) data.duration = duration;
-      return data;
-    });
-    await this.postBulkLog(this.portalId, projectID, logOnTask);
+    const logOnTask = bulkUploadPayloadBuilder(responseTask, body, date);
+    await this.postBulkLog(
+      this.portalId,
+      projectID,
+      logOnTask as TrackModuleBodyDto[],
+    );
     await this.getLogSendIt({
       portalId: this.portalId,
       projectId: projectID,

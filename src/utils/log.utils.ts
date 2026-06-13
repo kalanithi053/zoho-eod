@@ -1,9 +1,12 @@
+import { BadRequestException } from "@nestjs/common";
+import { TaskLogDto } from "../dto/get-time-log.dto";
 import { TrackModuleBodyDto } from "../dto/track.dto";
 import {
   WORK_START,
   splitIntoSegments,
   formatTime,
   skipBreaks,
+  isValidDuration,
 } from "./time.utils";
 
 const BASE_LOG_PAYLOAD = {
@@ -65,3 +68,51 @@ export const buildLogPayloads = (
 
   return payloads;
 };
+
+export const throwErrorDurations = (body: TaskLogDto[]) => {
+  let message = "";
+  body.forEach((item, index) => {
+    const hasDuration = item.duration !== undefined && item.duration !== null;
+    const hasStartTime = !!item.startTime;
+    const hasEndTime = !!item.endTime;
+
+    if (!hasDuration && !hasStartTime && !hasEndTime) {
+      message += `body.${index}: Duration or startTime and endTime must be provided.`;
+    }
+
+    if (hasDuration && !isValidDuration(String(item.duration))) {
+      message += `body.${index}: duration "${item.duration}" must be a valid number (0.1 to infinity).`;
+    }
+
+    if (hasDuration && (hasStartTime || hasEndTime)) {
+      message += `body.${index}: Provide either duration or startTime and endTime, not both.`;
+    }
+    if (!hasDuration && (!hasStartTime || !hasEndTime)) {
+      message += `body.${index}: ${!hasStartTime ? "StartTime is required" : "EndTime is required"}`;
+    }
+  });
+  if (message) throw new BadRequestException(message);
+};
+
+export const bulkUploadPayloadBuilder = (
+  responseTask: Record<string, any>[],
+  body: TaskLogDto[],
+  date: string,
+) =>
+  responseTask?.map((task: any) => {
+    const currentDuration = body.find((item: any) => item.task === task.name);
+    const {
+      endTime = "",
+      startTime = "",
+      duration = 0,
+    } = currentDuration ?? {};
+    const data: Record<string, any> = {
+      owner_zpuid: task.ownerId,
+      date,
+      module: { id: task.id, type: "task" },
+    };
+    if (endTime) data.end_time = endTime;
+    if (startTime) data.start_time = startTime;
+    if (duration) data.duration = duration;
+    return data;
+  });
